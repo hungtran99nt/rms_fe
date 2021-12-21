@@ -1,0 +1,10 @@
+.nav-menu{
+    top: auto;
+}
+.nav-menu-items{
+    padding: 0;
+}
+.selected{
+    background-color: #1a83ff;
+    color: white;
+}
