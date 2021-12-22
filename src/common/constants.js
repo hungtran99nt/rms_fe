@@ -15,6 +15,7 @@ export const STATISTIC_PAGE_TITLE = {
 
 export const DATE_FORMAT = {
     yMd: "yyyy-MM-dd",
+    DMy: "DD-MM-yyyy",
     dMy: "dd/MM/yyyy"
 }
 

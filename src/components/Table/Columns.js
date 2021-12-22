@@ -1,6 +1,9 @@
 import {DATE_FORMAT, SORT_ORDERS} from "../../common/constants";
 import moment from "moment";
-import filterFactory, {textFilter} from 'react-bootstrap-table2-filter';
+
+export const numberFormatter = (cell) => {
+    return <span>{cell.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>;
+}
 
 export const _defaultCol = [
     {
@@ -52,32 +55,53 @@ export const _purchaseDetailCol = [
 
 export const _purchaseStatisticCol = [
     {
-        dataField: 'billID',
+        dataField: 'id',
         text: 'Mã hoá đơn nhập',
-        sort: true
+        sort: true,
+        headerAlign: 'center',
+        footer: "",
     }, {
         dataField: 'dateCreate',
         text: 'Ngày nhập',
+        align: "center",
         sort: true,
         sortFunc: (a, b, order) => {
             if (order === SORT_ORDERS.ASC)
                 return moment(a, DATE_FORMAT.yMd) - moment(b, DATE_FORMAT.yMd);
             return moment(b, DATE_FORMAT.yMd) - moment(a, DATE_FORMAT.yMd);
         },
-    }, {
+        headerAlign: 'center',
+        footer: "",
+    },{
+        dataField: 'supplier',
+        text: 'Nhà cung cấp',
+        sort: true,
+        headerAlign: 'center',
+        footer: "",
+    },{
         dataField: 'itemAmount',
         text: 'Tổng lượng hàng nhập',
-        sort: true
+        sort: true,
+        align: 'right',
+        formatter: numberFormatter,
+        headerAlign: 'center',
+        footerAlign: (column, colIndex) => 'right',
+        footer: "Tổng cộng",
     }, {
         dataField: 'purchaseValue',
         text: 'Tổng tiền',
-        sort: true
+        sort: true,
+        align: 'right',
+        formatter: numberFormatter,
+        headerAlign: 'center',
+        footerAlign: (column, colIndex) => 'right',
+        footer: columnData => columnData.reduce((acc, item) => acc + item, 0).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })
     }
 ];
 
-export const numberFormatter = (cell) => {
-    return <span>{cell.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>;
-}
 export const _supplierStatisticCol = [
     {
         dataField: 'id',

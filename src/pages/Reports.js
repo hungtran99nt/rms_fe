@@ -32,12 +32,11 @@ const Reports = () => {
     const [reloadData, setReloadData] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("")
-    const [supplierStatistics, setSupplierStatistics] = useState([])
-
-
+    const [supplierStatistics, setSupplierStatistics]
+        = useState(JSON.parse(localStorage.getItem("SUPPLIER_STATS")) || []);
 
     const initialValues = {
-        statistic: "",
+        statistic: localStorage.getItem("CHOSEN") || "",
         beginDate: "",
         endDate: "",
         date: ""
@@ -45,44 +44,35 @@ const Reports = () => {
 
     const submit = (values) => {
         setIsLoading(true);
-        if (values.beginDate && !values.endDate){
+        if (values.beginDate && !values.endDate || !values.beginDate && values.endDate) {
             setError("Khoảng thời gian không hợp lệ. Vui lòng nhập lại");
+            localStorage.removeItem("SUPPLIER_STATS");
             return;
         }
-        if (values.beginDate && values.endDate){
-            axios({
-                method: 'POST',
-                url: `${API_URL}/statistic/supplier/`,
-                data: {
-                    beginDate: values.beginDate,
-                    endDate: values.endDate
-                }
-            }).then(res => {
-                setSupplierStatistics(convertDataResponse(res));
-                setIsLoading(false);
-                setReloadData(false);
-                setError("");
-            }).catch(err => {
-                console.log("err = ", err);
-                setIsLoading(false);
-                setReloadData(false);
-                setError(`Error: ${err.message}`);
-            });
-        }
         axios({
-            method: 'GET',
-            url: `${API_URL}/statistic/supplier/all`,
+            method: 'POST',
+            url: `${API_URL}/statistic/supplier/`,
+            data: {
+                beginDate: values.beginDate,
+                endDate: values.endDate
+            }
         }).then(res => {
+            localStorage.removeItem("SUPPLIER_STATS");
+            localStorage.removeItem("CHOSEN");
             setSupplierStatistics(convertDataResponse(res));
             setIsLoading(false);
             setReloadData(false);
             setError("");
+            localStorage.setItem("SUPPLIER_STATS", JSON.stringify(res.data));
+            localStorage.setItem("CHOSEN", values.statistic);
         }).catch(err => {
             console.log("err = ", err);
+            localStorage.removeItem("SUPPLIER_STATS");
             setIsLoading(false);
             setReloadData(false);
             setError(`Error: ${err.message}`);
         });
+
     }
     const formik = useFormik({
         initialValues: initialValues,
@@ -106,7 +96,7 @@ const Reports = () => {
                                          formik.handleChange(evt);
                                      }}
                                      onBlur={formik.handleBlur}
-                                     values={formik.values.statistic}
+                                     value={formik.values.statistic}
                                      isInvalid={formik.touched.statistic && formik.errors.statistic}
                         >
                             <option value="">---Chọn loại thống kê---</option>
@@ -154,8 +144,8 @@ const Reports = () => {
                 </Row>
             </Form>
             <Row>
-                {title === STATISTIC_PAGE_TITLE.CUSTOMER && <CustomerStatisticTable/>}
-                {title === STATISTIC_PAGE_TITLE.SUPPLIER &&
+                {formik.values.statistic === STATISTIC_PAGE_TITLE.CUSTOMER && <CustomerStatisticTable/>}
+                {formik.values.statistic === STATISTIC_PAGE_TITLE.SUPPLIER &&
                     <SupplierStatisticTable
                         isLoading={isLoading}
                         reloadData={setReloadData}

@@ -3,7 +3,7 @@ import {SORT_ORDERS} from "./constants";
 
 export const pagination = paginationFactory({
     page: 1,
-    sizePerPage: 10,
+    sizePerPage: 5,
     nextPageText: 'Next',
     prePageText: 'Prev',
     hideSizePerPage: true,

@@ -20,6 +20,7 @@ const usePost = (initialData, postData, url, convertResponseToData) => {
         }).then(response => {
             if (!didCancel) {
                 setIsLoading(false);
+                console.log(response.data)
                 setData(convertResponseToData(response));
             }
         }).catch(error => {
@@ -32,6 +33,7 @@ const usePost = (initialData, postData, url, convertResponseToData) => {
             didCancel = true;
         }
     }, [url, convertResponseToData]);
+    console.log(data)
     return {
         isLoading,
         data,

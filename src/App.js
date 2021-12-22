@@ -13,6 +13,7 @@ import axios from "axios";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import PageNotFound from "./components/PageNotFound";
+import ReportPurchaseBill from "./pages/ReportPurchaseBill";
 const convertDataResponse = res => (
     {
         fullName: `${res.data.firstName} ${res.data.lastName}`,
@@ -69,6 +70,9 @@ function App() {
                                 </Route>
                                 <Route path='/reports'>
                                     {token ? <Reports/> : <Login/>}
+                                </Route>
+                                <Route path="/purchaseStat/supplier/:id" exact>
+                                    {token ? <ReportPurchaseBill/> : <Login/>}
                                 </Route>
                                 <Route path="/login" exact>
                                     <Login/>
