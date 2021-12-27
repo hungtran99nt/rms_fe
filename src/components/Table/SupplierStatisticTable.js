@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import BootstrapTable from "react-bootstrap-table-next";
 import {_purchaseStatisticCol, _supplierStatisticCol, numberFormatter} from "./Columns";
 import DataNotFound from "../DataNotFound";
@@ -19,7 +19,7 @@ const SupplierStatisticTable = ({supplierStatistics, beginDate, endDate, isLoadi
 
     const pagination = paginationFactory({
         // page: 1,
-        sizePerPage: 5,
+        sizePerPage: 9,
         // nextPageText: 'Next',
         // prePageText: 'Prev',
         hideSizePerPage: false,
@@ -40,6 +40,13 @@ const SupplierStatisticTable = ({supplierStatistics, beginDate, endDate, isLoadi
         }
     }
 
+    const [searchText, setSearchText] = useState('');
+    const supplierStatsSearched = useMemo(() => {
+        return supplierStatistics.filter(s => {
+            return s.name?.toLowerCase().includes(searchText?.toLowerCase())
+        });
+    }, [searchText, supplierStatistics]);
+
     return (
         <>
             <PaginationProvider
@@ -55,8 +62,8 @@ const SupplierStatisticTable = ({supplierStatistics, beginDate, endDate, isLoadi
                                 <InputGroup id="input-group-header">
                                     <InputGroup.Text id="search-icon"><BiSearchAlt/></InputGroup.Text>
                                     <FormControl
-                                        // onChange={event => setSearchText(event.target.value)}
-                                        placeholder="Enter supplier name"
+                                        onChange={event => setSearchText(event.target.value)}
+                                        placeholder="Tìm theo tên của NCC"
                                     />
                                 </InputGroup>
                             </div>
@@ -66,7 +73,7 @@ const SupplierStatisticTable = ({supplierStatistics, beginDate, endDate, isLoadi
                             <BootstrapTable
                                 hover
                                 keyField='id'
-                                data={supplierStatistics}
+                                data={supplierStatsSearched}
                                 columns={_supplierStatisticCol}
                                 defaultSorted={defaultSorted}
                                 formatter={numberFormatter}
@@ -79,7 +86,7 @@ const SupplierStatisticTable = ({supplierStatistics, beginDate, endDate, isLoadi
                 }
             </PaginationProvider>
             {isLoading && <div>Loading...</div>}
-            {!isLoading && supplierStatistics.length === 0 && <DataNotFound/>}
+            {!isLoading && supplierStatsSearched.length === 0 && <DataNotFound/>}
         </>
     );
 };

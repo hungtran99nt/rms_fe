@@ -1,23 +1,24 @@
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import BootstrapTable from "react-bootstrap-table-next";
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import {_purchaseStatisticCol, numberFormatter} from "./Columns";
 import DataNotFound from "../DataNotFound";
 import {SORT_ORDERS} from "../../common/constants";
 import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
-import {Button} from "react-bootstrap";
+import {Button, FormControl, InputGroup} from "react-bootstrap";
 import {useHistory} from "react-router-dom";
+import {BiSearchAlt} from "react-icons/bi";
 
 const defaultSorted = [{
     dataField: 'purchaseValue',
     order: SORT_ORDERS.DESC
 }]
 
-const PurchaseStatisticTable = ({purchaseStats, isLoading}) => {
+const PurchaseStatisticTable = ({purchaseStats, isLoading, beginDate, endDate}) => {
     let history = useHistory();
     const pagination = paginationFactory({
         // page: 1,
-        // sizePerPage: 5,
+        sizePerPage: 9,
         // nextPageText: 'Next',
         // prePageText: 'Prev',
         // hideSizePerPage: true,
@@ -26,6 +27,16 @@ const PurchaseStatisticTable = ({purchaseStats, isLoading}) => {
         custom: true,
         totalSize: purchaseStats.length
     });
+
+    const onClickRow = {
+        onClick: (e, row, rowIndex) => {
+            history.push(`/purchaseBill/${row.id}`);
+        }
+    }
+
+    console.log(beginDate)
+    console.log(endDate)
+
     return (
         <>
             <PaginationProvider
@@ -37,7 +48,9 @@ const PurchaseStatisticTable = ({purchaseStats, isLoading}) => {
                          paginationTableProps
                      }) => (
                         <div>
-                            <Button onClick={() => history.push("/reports")}>Back</Button>
+                            <div className="d-inline-block mb-3">
+
+                            </div>
                             <PaginationListStandalone
                                 { ...paginationProps }
                             />
@@ -49,6 +62,7 @@ const PurchaseStatisticTable = ({purchaseStats, isLoading}) => {
                                 defaultSorted={defaultSorted}
                                 formatter={numberFormatter}
                                 footerClasses="footer-class"
+                                rowEvents={onClickRow}
                                 { ...paginationTableProps }
                             />
                         </div>

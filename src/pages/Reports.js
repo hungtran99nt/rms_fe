@@ -24,7 +24,7 @@ const convertDataResponse = res => res.data.map(s => (
 
 
 const Reports = () => {
-    const [title, setTitle] = useState("")
+    const [title, setTitle] = useState(localStorage.getItem("TITLE") || "");
 
     const [dateRange, setDateRange] = useState([null, null]);
     const [beginDate, endDate] = dateRange;
@@ -37,17 +37,18 @@ const Reports = () => {
 
     const initialValues = {
         statistic: localStorage.getItem("CHOSEN") || "",
-        beginDate: "",
-        endDate: "",
+        beginDate: new Date(localStorage.getItem("BEGIN_DATE")) || null,
+        endDate: new Date(localStorage.getItem("END_DATE")) || null,
         date: ""
     }
 
-    const submit = (values) => {
+    const submit = (values, {setFieldValues}) => {
         setIsLoading(true);
-        if (values.beginDate && !values.endDate || !values.beginDate && values.endDate) {
-            setError("Khoảng thời gian không hợp lệ. Vui lòng nhập lại");
+        if (values.beginDate && !values.endDate || !values.beginDate && values.endDate || values.beginDate ==="" && values.endDate==="") {
             localStorage.removeItem("SUPPLIER_STATS");
-            return;
+            localStorage.removeItem("BEGIN_DATE");
+            localStorage.removeItem("END_DATE");
+            setDateRange([null, null])
         }
         axios({
             method: 'POST',
@@ -59,15 +60,22 @@ const Reports = () => {
         }).then(res => {
             localStorage.removeItem("SUPPLIER_STATS");
             localStorage.removeItem("CHOSEN");
+            localStorage.removeItem("BEGIN_DATE");
+            localStorage.removeItem("END_DATE");
             setSupplierStatistics(convertDataResponse(res));
             setIsLoading(false);
             setReloadData(false);
             setError("");
             localStorage.setItem("SUPPLIER_STATS", JSON.stringify(res.data));
             localStorage.setItem("CHOSEN", values.statistic);
+            localStorage.setItem("TITLE", title);
+            localStorage.setItem("BEGIN_DATE", values.beginDate);
+            localStorage.setItem("END_DATE", values.endDate);
         }).catch(err => {
             console.log("err = ", err);
             localStorage.removeItem("SUPPLIER_STATS");
+            localStorage.removeItem("BEGIN_DATE");
+            localStorage.removeItem("END_DATE");
             setIsLoading(false);
             setReloadData(false);
             setError(`Error: ${err.message}`);
@@ -79,11 +87,23 @@ const Reports = () => {
         onSubmit: submit,
         validationSchema: validateForm,
     });
+
+    let sum;
+    if (supplierStatistics.length !== 0)
+        sum = supplierStatistics.map(i => i.purchaseValue).reduce((a, b) => a + b).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+
     return (
         <div>
             <Row>
-                <Col className="text-center">
-                    <h3 style={{backgroundColor: "var(--title-color)"}}>{title ? title : STATISTIC_PAGE_TITLE.DEFAULT}</h3>
+                <Col className="text-center mb-3">
+                    <h3 style={{
+                        backgroundColor: "var(--title-color)",
+                        borderRadius: "0.25rem"
+                    }}>{title ? title : STATISTIC_PAGE_TITLE.DEFAULT}</h3>
                 </Col>
             </Row>
             <Form onSubmit={formik.handleSubmit} className="mb-3">
@@ -144,6 +164,7 @@ const Reports = () => {
                 </Row>
             </Form>
             <Row>
+                {formik.values.statistic === STATISTIC_PAGE_TITLE.DEFAULT && <CustomerStatisticTable/>}
                 {formik.values.statistic === STATISTIC_PAGE_TITLE.CUSTOMER && <CustomerStatisticTable/>}
                 {formik.values.statistic === STATISTIC_PAGE_TITLE.SUPPLIER &&
                     <SupplierStatisticTable
@@ -153,6 +174,14 @@ const Reports = () => {
                         beginDate={formik.values.beginDate}
                         endDate={formik.values.endDate}
                     />}
+            </Row>
+            <Row>
+                <Col>
+                    <div className="sum fw-bold"
+                         style={{backgroundColor: "var(--title-color)", padding: "10px", borderRadius: "0.25rem"}}>
+                        <span>Tổng === {sum} ₫</span>
+                    </div>
+                </Col>
             </Row>
         </div>
     );

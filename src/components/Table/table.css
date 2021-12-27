@@ -1,5 +1,8 @@
 .footer-class {
     background-color: var(--title-color);
+    position: fixed;
+    bottom: 0;
+    right: 1.6rem;
 }
 
 .header-class {

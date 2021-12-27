@@ -9,3 +9,14 @@
     left: 9px;
     top: 11px;
 }
+
+.sum{
+    position: absolute;
+    width: auto;
+    text-align: right;
+    bottom: 0;
+    right: 1.6rem;
+}
+.input-group>.form-control, .input-group>.form-select{
+    width: 253px !important;
+}

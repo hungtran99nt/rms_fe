@@ -2,7 +2,7 @@ import {DATE_FORMAT, SORT_ORDERS} from "../../common/constants";
 import moment from "moment";
 
 export const numberFormatter = (cell) => {
-    return <span>{cell.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>;
+    return <span>{cell.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} </span>;
 }
 
 export const _defaultCol = [
@@ -27,28 +27,48 @@ export const _defaultCol = [
 
 export const _purchaseDetailCol = [
     {
-        dataField: 'id',
-        text: 'ID',
+        dataField: 'ingredientID',
+        text: 'Mã nguyên liệu',
+        align: 'right',
+        headerAlign: 'center',
         sort: true
     }, {
-        dataField: 'name',
+        dataField: 'ingredientName',
         text: 'Tên nguyên liệu',
+        headerAlign: 'center',
+        sort: true
+    }, {
+        dataField: 'ingredientType',
+        text: 'Loại',
+        align: "center",
+        headerAlign: 'center',
+        sort: true
+    }, {
+        dataField: 'ingredientUnit',
+        text: 'Đơn vị tính',
+        align: "center",
+        headerAlign: 'center',
         sort: true
     }, {
         dataField: 'unitPrice',
         text: 'Đơn giá',
+        formatter: numberFormatter,
+        headerAlign: 'center',
+        align: 'right',
         sort: true
     }, {
         dataField: 'quantity',
         text: 'Số lượng',
-        sort: true
-    }, {
-        dataField: 'unit',
-        text: 'Đơn vị tính',
+        formatter: numberFormatter,
+        headerAlign: 'center',
+        align: 'right',
         sort: true
     }, {
         dataField: 'total',
         text: 'Thành tiền',
+        align: 'right',
+        formatter: numberFormatter,
+        headerAlign: 'center',
         sort: true,
     }
 ];
@@ -58,8 +78,13 @@ export const _purchaseStatisticCol = [
         dataField: 'id',
         text: 'Mã hoá đơn nhập',
         sort: true,
+        align: 'right',
         headerAlign: 'center',
-        footer: "",
+    }, {
+        dataField: 'supplier',
+        text: 'Nhà cung cấp',
+        sort: true,
+        headerAlign: 'center',
     }, {
         dataField: 'dateCreate',
         text: 'Ngày nhập',
@@ -71,22 +96,13 @@ export const _purchaseStatisticCol = [
             return moment(b, DATE_FORMAT.yMd) - moment(a, DATE_FORMAT.yMd);
         },
         headerAlign: 'center',
-        footer: "",
-    },{
-        dataField: 'supplier',
-        text: 'Nhà cung cấp',
-        sort: true,
-        headerAlign: 'center',
-        footer: "",
-    },{
+    }, {
         dataField: 'itemAmount',
         text: 'Tổng lượng hàng nhập',
         sort: true,
         align: 'right',
         formatter: numberFormatter,
         headerAlign: 'center',
-        footerAlign: (column, colIndex) => 'right',
-        footer: "Tổng cộng",
     }, {
         dataField: 'purchaseValue',
         text: 'Tổng tiền',
@@ -94,11 +110,6 @@ export const _purchaseStatisticCol = [
         align: 'right',
         formatter: numberFormatter,
         headerAlign: 'center',
-        footerAlign: (column, colIndex) => 'right',
-        footer: columnData => columnData.reduce((acc, item) => acc + item, 0).toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        })
     }
 ];
 
@@ -107,22 +118,21 @@ export const _supplierStatisticCol = [
         dataField: 'id',
         text: 'Mã nhà cung cấp',
         sort: true,
-        footer: "",
-        headerAlign: 'center'
+        align: 'right',
+        headerAlign: 'center',
+        headerStyle: () => {
+            return {width: '150px'};
+        }
     }, {
         dataField: 'name',
         text: 'Tên nhà cung cấp',
         sort: true,
-        footer: "",
         headerAlign: 'center'
-        // filter: textFilter()
     }, {
         dataField: 'itemAmount',
         text: 'Tổng lượng hàng nhập',
         sort: true,
         align: 'right',
-        footer: "Tổng cộng",
-        footerAlign: (column, colIndex) => 'right',
         headerAlign: 'center',
         formatter: numberFormatter
     }, {
@@ -132,11 +142,6 @@ export const _supplierStatisticCol = [
         headerAlign: 'center',
         align: 'right',
         formatter: numberFormatter,
-        footerAlign: (column, colIndex) => 'right',
-        footer: columnData => columnData.reduce((acc, item) => acc + item, 0).toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        })
     }
 ];
 
